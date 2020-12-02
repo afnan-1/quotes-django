@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Author,Quotes,Resource,AuthorAdmin
+from .models import Author
 from django.contrib.auth.models import Group
 
 class AccountAdmin(admin.ModelAdmin):
@@ -13,4 +13,3 @@ class AccountAdmin(admin.ModelAdmin):
 
 admin.site.unregister(Group)
 admin.site.register(Author,AccountAdmin)
-admin.site.register(Quotes,AuthorAdmin)
