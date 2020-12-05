@@ -11,5 +11,4 @@ class AccountAdmin(admin.ModelAdmin):
     list_filter=()
     fieldsets=()
 
-admin.site.unregister(Group)
 admin.site.register(Author,AccountAdmin)
