@@ -42,10 +42,11 @@ def home(request):
             import pdb;pdb.set_trace()
             for data in importted_data:
                 print(data[2])
-                # author = Author.objects.filter(first_name=data[2].split(' ')[1], last_name=data[2].split(" ")[1])
-                author = Author.objects.filter(first_name="afnan", last_name='nadeem')
-                for i in author:
-                    print(i)
-                value = Quote(quote=data[0],difficulty=data[1],author=author)
+                author = Author.objects.get(first_name=data[2].split(' ')[0], last_name=data[2].split(" ")[1])
+                # author = Author.objects.get(first_name="", last_name='nadeem')
+                value = Quote(quote=data[0],difficulty=data[1])
+                value.save()
+                value = Quote.objects.get(quote=data[0])
+                value.author = author
                 value.save()
     return render(request,'index.html')

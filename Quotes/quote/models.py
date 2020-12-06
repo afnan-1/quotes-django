@@ -5,7 +5,7 @@ from author.models import Author
 class Quote(models.Model):
     quote = models.TextField(max_length=1000)
     difficulty = models.IntegerField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE,blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
