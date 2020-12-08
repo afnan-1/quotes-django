@@ -26,7 +26,6 @@ class AuthorAdmin(admin.ModelAdmin):
     inlines = [
         ResourceInline
     ]
-   
     search_fields=('quote','difficulty','author__first_name','author__last_name','author__attribute')
     list_display=('quotes','difficulty','author','created_at','updated_at')
     fieldsets=()

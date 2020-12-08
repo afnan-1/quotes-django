@@ -35,17 +35,9 @@ class Author(models.Model):
         return len(quote.models.Quote.objects.filter(author=self.pk))
     @property
     def age( self):
-        if self.date_of_death and self.date_of_birth:
-            dod = str(self.date_of_death)
-            dod = dod.split('-')
-            dob = str(self.date_of_birth)
-            dob = dob.split('-')
-            return (int(dod[0])-int(dob[0]))
-        elif self.date_of_birth:
-            dob = str(self.date_of_birth)
-            dob = dob.split('-')[0]
-            year = datetime.date.today().year
-            return (int(year)-int(dob))
+
+        current = self.date_of_death if self.date_of_death else datetime.date.today()
+        return current.year - self.date_of_birth.year - ((current.month,current.day) < (self.date_of_birth.month,self.date_of_birth.day))
 
     def save(self,*args,**kw):
         if self.middle_name=='':
