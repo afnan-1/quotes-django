@@ -4,8 +4,11 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     </head>
 <body>
+  {% if user.is_superuser %}
     <h1 class='text-center'>The Quotes</h1>
     <hr>
+   
+ 
 <div class="container col-lg-6 col-md-8 col-sm-12">
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -14,7 +17,7 @@
     <button class="btn btn-block btn-primary mt-1 " type="submit">Upload</button>
   </form>
   <hr>
-  <form method="post" action='/' enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <h3>Upload Quotes</h3>
     <input type="file" name="myquotes">
@@ -22,5 +25,8 @@
   </form>
   
 </div>
+{% else %}
+    <h1 class='text-center'>Please login First To access this Page</h1>
+{% endif %}
 </body>
 </html>
