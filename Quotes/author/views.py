@@ -7,11 +7,13 @@ from tablib import Dataset
 from errorlog.models import ErrorMessage
 from django.http import HttpResponse
 # Create your views here.
-
-
 def home(request):
+    return render(request,'index.html')
+
+def admin_import(request):
     if request.method=="POST":
-        url = 'http://localhost:8000/admin/author/author'
+        url_author = '/admin/author/author'
+        url_quotes = '/admin/quote/quote'
         if request.user.is_superuser:
             if 'myfile' in request.FILES:
                 author_resource = AuthorResource
@@ -40,9 +42,9 @@ def home(request):
                             value.save()
                         except Exception as e:
                             error = str(data)+"--"+str(e)
-                            err = ErrorMessage(message=error, type_error='Error In Auhtors')
+                            err = ErrorMessage(message=error, type_error='Error In Authors')
                             err.save()
-                return redirect(url)
+                return redirect(url_author)
 
 
             if 'myquotes' in request.FILES:
@@ -63,9 +65,9 @@ def home(request):
                                 value = Quote.objects.get(pk=value.pk)
                                 value.author = author
                                 value.save()
-                        except:
+                        except Exception as e:
                             error = str(data)+"--"+str(e)
                             err = ErrorMessage(message=error, type_error='Error In Quotes')
                             err.save()
-                return redirect(url)
-    return render(request,'index.html')
+                return redirect(url_quotes)
+    return render(request,'admin-import.html')
