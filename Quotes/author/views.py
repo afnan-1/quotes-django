@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from quote.models import Quote
 from .resources import AuthorResource,QuoteResource
-from .models import Author
+from .models import Author,Attribute
 from django.contrib import messages
 from tablib import Dataset
 from errorlog.models import ErrorMessage
@@ -22,24 +22,25 @@ def admin_import(request):
                 if not new_author.name.endswith('xlsx'):
                     messages.info(request,'wrong format')
                     return render(request,'index.html')
+                
                 importted_data = dataset.load(new_author,format='xlsx')
+                count = len(importted_data.headers)-9
                 for data in importted_data:
                     if data is not None:
                         try:
+                            data=strip_data(data)
                             dob = data[4]
                             dod = data[5]
-                            attribute = data[7].capitalize()
                             sex = data[6].upper()
                             if data[1]==None:
                                 middle_name = ''
                             else:
                                 middle_name=data[1]
-                            if data[2]==None:
-                                last_name=''
-                            else:
-                                last_name=data[2]
-                            value = Author(first_name=data[0], middle_name=middle_name, last_name=last_name,alias=data[3],date_of_birth=dob,date_of_death=dod,sex=sex,attribute=attribute,bio=data[8])
+                            last_name=data[2]
+                            value = Author(first_name=data[0], middle_name=middle_name, last_name=last_name,alias=data[3],date_of_birth=dob,date_of_death=dod,sex=sex,bio=data[-2])
                             value.save()
+                            list_attributes = data[6:count+6]
+                            add_attribute(value.pk,list_attributes)
                         except Exception as e:
                             error = str(data)+"--"+str(e)
                             err = ErrorMessage(message=error, type_error='Error In Authors')
@@ -58,7 +59,11 @@ def admin_import(request):
                 for data in importted_data:
                     if data is not None:
                         try:
-                            author = Author.objects.get(full_name=data[2])
+                            data=strip_data(data)
+                            try:
+                                author = Author.objects.get(full_name=data[2])
+                            except:
+                                author = Author.objects.get(short_name=data[2])
                             if author:
                                 value = Quote(quote=data[0],difficulty=data[1])
                                 value.save()
@@ -71,3 +76,24 @@ def admin_import(request):
                             err.save()
                 return redirect(url_quotes)
     return render(request,'admin-import.html')
+
+
+def add_attribute(id,att_list):
+    author = Author.objects.get(pk=id)
+    for attr in att_list:
+        try:
+            attr = attr.title()
+            attribute_db = Attribute.objects.get(name=attr)
+            author.attribute.add(attribute_db)
+            author.save()
+        except Exception as e:
+            pass
+def strip_data(data_list):
+    stripped_list = []
+    for data in data_list:
+        if data and isinstance(data,str):
+            data=data.strip()
+            data=data.title()
+        stripped_list.append(data)
+    return stripped_list
+
