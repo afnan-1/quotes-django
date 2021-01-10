@@ -4,8 +4,13 @@ from .resources import AuthorResource,QuoteResource
 from .models import Author,Attribute
 from django.contrib import messages
 from tablib import Dataset
+from .serializers import AuthorSerializer
 from errorlog.models import ErrorMessage
 from django.http import HttpResponse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
 # Create your views here.
 def home(request):
     return render(request,'index.html')
@@ -96,4 +101,10 @@ def strip_data(data_list):
             data=data.title()
         stripped_list.append(data)
     return stripped_list
+
+@api_view(['GET',])
+def authors_list(request):
+    authors = Author.objects.all()
+    serializer = AuthorSerializer(authors, many=True)
+    return Response({'data':serializer.data, 'messages':'Authors list','status':True})
 

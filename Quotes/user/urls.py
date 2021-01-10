@@ -12,7 +12,7 @@ urlpatterns = [
     path('updateuser/<int:pk>/',UpdateUser.as_view()),
     path('deleteuser/<int:pk>/',DeleteUser.as_view()),
     
-    # path('update/', UserLoginApiView.as_view()),
+    
     # path('getusers/', UserManagement.as_view()),
     path('facebooklogin/', UserFacebookLoginApiView.as_view()),
     path('googlelogin/', UserGoogleLoginApiView.as_view()),

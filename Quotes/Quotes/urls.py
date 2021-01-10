@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls,name='admin'),
     path('',include('author.urls')),
     path('dataset/',include('dataset.urls')),
+    path('quotes/', include('quote.urls'))
 ]
 from django.conf import settings
 from django.conf.urls.static import static

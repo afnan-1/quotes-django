@@ -19,6 +19,8 @@ class User(AbstractUser):
         ('M', 'Male'),
         ('F', 'Female'),
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     gender = models.CharField(max_length=7, choices=GENDER_CHOICES, blank=True, null=True)
     def __str__(self):
         return self.email
