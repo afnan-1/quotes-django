@@ -1,7 +1,9 @@
 from django.db import models
 from author.models import Author
+from user.models import User
 # Create your models here.
 class Dataset(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True)
     type_dataset = models.CharField(max_length=50, blank=True, null=True)
     dataset_name = models.CharField(max_length=50, blank=True, null=True)
     morality = models.CharField(max_length=50, blank=True, null=True)
@@ -21,7 +23,6 @@ class Dataset(models.Model):
 
 
 class Question(models.Model):
-    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
     title = models.TextField(max_length=500)
     GENDER_CHOICES = (
         ('M', 'Male'),

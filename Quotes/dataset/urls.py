@@ -6,10 +6,10 @@ router = DefaultRouter()
 # router.register('update/', updateDataSet, basename='update')
 urlpatterns = [
     path('', include(router.urls)),
-    path('authorslist/', dataset_authorlist),
+    path('authorslist/<int:pk>/', dataset_detail),
     path('list/', list_dataset),
-    path('questions/<int:pk>/', get_questions),
-    # path('delete/<int:pk>',DeleteDataSet.as_view()),
+    path('discussionmode/<int:pk>/', discussion_mode),
+    path('delete/<int:pk>/',delete_dataset),
     path('create/',createDataSet),
     path('update/<int:pk>',updateDataSet)
 ]

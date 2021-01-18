@@ -13,7 +13,8 @@ urlpatterns = [
     path('deleteuser/<int:pk>/',DeleteUser.as_view()),
     
     
-    # path('getusers/', UserManagement.as_view()),
+    path('getuser/', get_user),
+    path('getuser2/',UserView.as_view()),
     path('facebooklogin/', UserFacebookLoginApiView.as_view()),
     path('googlelogin/', UserGoogleLoginApiView.as_view()),
     # path('add-coins/', addcoins.as_view({'post': 'add'})),

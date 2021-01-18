@@ -3,28 +3,26 @@ from rest_framework import viewsets, generics
 from .serializers import *
 from author.models import Author,Attribute
 from .models import Dataset,Question
-from rest_framework.decorators import api_view
+from user.models import User
+from quote.models import Quote
+from quote.serializers import QuoteSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import json
 import random
 
 # Create your views here.
 
-class DeleteDataSet(generics.DestroyAPIView):
-    queryset = Author.objects.all()
-    serializer_class = DataSetSerializer
-
-
-class DatasetView(viewsets.ModelViewSet):
-    queryset = Dataset.objects.all()
-    serializer_class = DataSetSerializer
 
 @api_view(['GET', 'POST'])
+# @permission_classes([IsAuthenticated])
 def createDataSet(request):
     if request.method == 'POST':
         type_dataset = request.data.get('type_dataset')
         dataset_name = request.data.get('name')
-
+        print(request.user.id)
+        user_id = User.objects.get(pk=request.user.id)
         gender = []
         if request.data.get('gender') == 'all':
             gender.append('F')
@@ -40,7 +38,7 @@ def createDataSet(request):
                 size = int(size)    
             # gender = request.data.get('gender')
             morality = request.data.get('morality')
-            dataset = Dataset(dataset_name=dataset_name, type_dataset=type_dataset, attributes=attributes,size=size,
+            dataset = Dataset(dataset_name=dataset_name,user=user_id ,type_dataset=type_dataset, attributes=attributes,size=size,
             gender=gender, morality=morality)
             dataset.save()
             attribute_id = []
@@ -77,14 +75,16 @@ def createDataSet(request):
         elif type_dataset == 'manual':
             authors_id = request.data.get('authors')
             author = Author.objects.filter(pk__in=authors_id)
-            dataset = Dataset(dataset_name=dataset_name, type_dataset=type_dataset)
+            dataset = Dataset(dataset_name=dataset_name, user=user_id,type_dataset=type_dataset)
             dataset.save()
+            print(user_id.id)
             for i in author:
                 dataset.author.add(i.pk)
         return Response({"message": "Dataset Created", "success": True})
     return Response({"message": "POST Request"})
 
 @api_view(['PUT',])
+@permission_classes([IsAuthenticated])
 def updateDataSet(request,pk):
     if request.method == 'PUT':
         type_dataset = request.data.get('type_dataset')
@@ -157,30 +157,47 @@ def updateDataSet(request,pk):
     else:
         return Response({'message':'required POST request','status':False})
 
-class listDataSet(viewsets.ModelViewSet):
-    queryset = Dataset.objects.all()
-    serializer_class = DataSetSerializer
 
 @api_view(['GET',])
+@permission_classes([IsAuthenticated])
 def list_dataset(request):
-    dataset = Dataset.objects.all()
-    serializer = DataSetAuthorSerializer(dataset, many=True)
+    user_id = User.objects.get(pk=request.user.id)
+    dataset = Dataset.objects.filter(user=user_id).order_by('-created_at')
+    serializer = DataSetSerializer(dataset, many=True)
     author_serializer = AuthorDetailSerializer(dataset, many=True)
     return Response({'data':serializer.data,'length':len(author_serializer.data),'message':'Dataset List','status':True})
 
 @api_view(['GET',])
-def dataset_authorlist(request):
-    dataset = Dataset.objects.all()
-    serializer = AuthorDetailSerializer(dataset, many=True)
+# @permission_classes([IsAuthenticated])
+def dataset_detail(request,pk):
+    dataset = Dataset.objects.get(pk=pk)
+    serializer = DataSetSerializer(dataset)
     return Response({'data':serializer.data,'message':'authors of dataset','status':True})
 
 
 @api_view(['GET',])
-def get_questions(request,pk):
-    questions = list(Question.objects.filter(dataset=pk))
+# @permission_classes([IsAuthenticated])
+def discussion_mode(request,pk):
+    # questions = list(Question.objects.filter(dataset=pk))
+    dataset = Dataset.objects.get(pk=pk)
+    quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
+    quotations_serializer = QuoteSerializer(quotations, many=True)
+    random_quotations = random.sample(quotations_serializer.data,len(quotations_serializer.data))
+    # serializer = QuestionSerializer(random_question, many=True)
+    
+    return Response({'data':random_quotations,'message':'Questions of dataset','status':True})
+
+
+@api_view(['DELETE',])
+def delete_dataset(request,pk):
     try:
-        random_question = random.sample(questions,5)
+        dataset = Dataset.objects.get(pk=pk).delete()
+        return Response({
+            'message':"Dataset Delete successfully",
+            'status':True
+        })
     except:
-        random_question = Question.objects.filter(dataset=pk)
-    serializer = QuestionSerializer(random_question, many=True)
-    return Response({'data':serializer.data,'message':'Questions of dataset','status':True})
+        return Response({
+            'message':'Error',
+            'status':False
+        })

@@ -11,7 +11,8 @@ from rest_framework.views import APIView
 from user.serializers import *
 from django.db.models import Q
 from rest_framework import generics
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 User = get_user_model()
 
 
@@ -223,3 +224,22 @@ class DeleteUser(generics.DestroyAPIView):
     queryset = User.objects.all()
     serializer_class = GetUserListSerializer
     # permission_classes = (IsAuthenticated,)
+
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def get_user(request):
+    user = User.objects.get(pk=request.user.id)
+    serializer = GetUserListSerializer(user, many=False)
+    return Response({
+        'message':"User Get Succesfully",
+        'data':serializer.data,
+        'success':True
+    })
+class UserView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = User.objects.get(pk=request.user.id)
+        serializer = GetUserListSerializer(queryset, many=False, context={"request":request})
+        return Response(serializer.data)

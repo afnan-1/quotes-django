@@ -27,6 +27,8 @@ class SignUpSerializer(serializers.ModelSerializer):
             user = User.objects.create(
                 username=validated_data['email'],
                 email=validated_data['email'],
+                first_name = validated_data['first_name'],
+                last_name=validated_data['last_name'],
                 nickname=validated_data['nickname'],
                 date_of_birth=validated_data['date_of_birth'],
                 gender = validated_data['gender']
@@ -38,10 +40,11 @@ class SignUpSerializer(serializers.ModelSerializer):
             raise Exception('Password do not match')
         
     
-class GetUserListSerializer(serializers.ModelSerializer):
+class GetUserListSerializer(serializers.HyperlinkedModelSerializer):
+    profile_picture = serializers.ImageField(max_length=None, allow_empty_file=False, allow_null=True, required=False)
     class Meta:
         model = User
-        fields='__all__'
+        fields = ('first_name','last_name','nickname','profile_picture','email','date_of_birth','gender')
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:

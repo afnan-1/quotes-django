@@ -4,7 +4,7 @@ from .resources import AuthorResource,QuoteResource
 from .models import Author,Attribute
 from django.contrib import messages
 from tablib import Dataset
-from .serializers import AuthorSerializer
+from .serializers import AuthorSerializer, AuthorListSerializer
 from errorlog.models import ErrorMessage
 from django.http import HttpResponse
 from rest_framework.response import Response
@@ -103,8 +103,14 @@ def strip_data(data_list):
     return stripped_list
 
 @api_view(['GET',])
+def authors_detail(request,pk):
+    authors = Author.objects.get(pk=pk)
+    serializer = AuthorSerializer(authors)
+    return Response({'data':serializer.data, 'messages':'Authors detail','status':True})
+
+
+@api_view(['GET',])
 def authors_list(request):
     authors = Author.objects.all()
-    serializer = AuthorSerializer(authors, many=True)
+    serializer = AuthorListSerializer(authors, many=True)
     return Response({'data':serializer.data, 'messages':'Authors list','status':True})
-
