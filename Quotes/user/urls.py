@@ -11,8 +11,6 @@ urlpatterns = [
     path('login/', UserLoginApiView.as_view()),
     path('updateuser/<int:pk>/',UpdateUser.as_view()),
     path('deleteuser/<int:pk>/',DeleteUser.as_view()),
-    
-    
     path('getuser/', get_user),
     path('getuser2/',UserView.as_view()),
     path('facebooklogin/', UserFacebookLoginApiView.as_view()),

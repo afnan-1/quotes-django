@@ -44,9 +44,9 @@ class GetUserListSerializer(serializers.HyperlinkedModelSerializer):
     profile_picture = serializers.ImageField(max_length=None, allow_empty_file=False, allow_null=True, required=False)
     class Meta:
         model = User
-        fields = ('first_name','last_name','nickname','profile_picture','email','date_of_birth','gender')
+        fields = ('id','first_name','last_name','nickname','profile_picture','email','date_of_birth','gender')
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username','gender','date_of_birth','nickname')
+        fields = ('first_name','last_name','nickname','gender','date_of_birth',)

@@ -114,8 +114,8 @@ class UserFacebookLoginApiView(ObtainAuthToken):
                 return Response({
                     "status": "success",
                     "message": "User login successfully",
-                    "data": {"token":token.key, 'uuid': queryset.uuid, 'email': queryset.email, 'username': queryset.username, 'phone_number': queryset.phone_number,
-                                 'name': queryset.name, 'birthday': queryset.birthday, 'gender': queryset.gender}
+                    "data": {"token":token.key, 'email': queryset.email, 'username': queryset.username,
+                                 'name': queryset.name, 'gender': queryset.gender}
                     })
 
             else:
@@ -140,8 +140,8 @@ class UserFacebookLoginApiView(ObtainAuthToken):
                 return Response({
                     "status": "success",
                     "message": "user signup successfully", 
-                    "data":{'token': token.key, 'uuid': queryset.uuid, 'email': queryset.email, 'username': queryset.username, 'phone_number': queryset.phone_number,
-                    'name': queryset.name, 'birthday': queryset.birthday, 'gender': queryset.gender}
+                    "data":{'token': token.key, 'email': queryset.email, 'username': queryset.username,
+                    'name': queryset.name,  'gender': queryset.gender}
                     })
 
         except Exception as e:

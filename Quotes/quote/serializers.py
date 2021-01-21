@@ -21,6 +21,6 @@ class QuoteSerializer(serializers.ModelSerializer):
         fields=('id','author','difficulty','quote','questions')
     def get_questions(self,obj):
         questions = list(Question.objects.all())
-        random_questions = random.sample(questions,5)
+        random_questions = random.sample(questions,3)
         q_serializer = QuestionSerializer(random_questions,many=True)
         return q_serializer.data

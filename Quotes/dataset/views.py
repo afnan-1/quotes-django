@@ -15,8 +15,8 @@ import random
 # Create your views here.
 
 
-@api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
+@api_view(['POST',])
+@permission_classes([IsAuthenticated])
 def createDataSet(request):
     if request.method == 'POST':
         type_dataset = request.data.get('type_dataset')
@@ -168,7 +168,7 @@ def list_dataset(request):
     return Response({'data':serializer.data,'length':len(author_serializer.data),'message':'Dataset List','status':True})
 
 @api_view(['GET',])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def dataset_detail(request,pk):
     dataset = Dataset.objects.get(pk=pk)
     serializer = DataSetSerializer(dataset)
@@ -182,7 +182,7 @@ def discussion_mode(request,pk):
     dataset = Dataset.objects.get(pk=pk)
     quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
     quotations_serializer = QuoteSerializer(quotations, many=True)
-    random_quotations = random.sample(quotations_serializer.data,len(quotations_serializer.data))
+    random_quotations = random.sample(quotations_serializer.data,5)
     # serializer = QuestionSerializer(random_question, many=True)
     
     return Response({'data':random_quotations,'message':'Questions of dataset','status':True})

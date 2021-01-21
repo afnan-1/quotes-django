@@ -15,6 +15,7 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='images/',blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     email_verfiied=models.BooleanField(default=False)
+    facebook_token = models.CharField(blank=True,null=True, max_length=500)
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
