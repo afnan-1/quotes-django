@@ -6,10 +6,10 @@ from dataset.serializers import QuestionSerializer
 import random
 
 class AuthorSerializer(serializers.ModelSerializer):
-    # attribute = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    attribute = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     class Meta:
         model = Author
-        fields=('id','full_name',)
+        fields=('id','short_name','date_of_birth','date_of_death','attribute','alias')
 
 
 
@@ -21,6 +21,6 @@ class QuoteSerializer(serializers.ModelSerializer):
         fields=('id','author','difficulty','quote','questions')
     def get_questions(self,obj):
         questions = list(Question.objects.all())
-        random_questions = random.sample(questions,3)
+        random_questions = random.sample(questions,5)
         q_serializer = QuestionSerializer(random_questions,many=True)
         return q_serializer.data

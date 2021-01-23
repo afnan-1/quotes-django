@@ -16,15 +16,14 @@ import random
 
 
 @api_view(['POST',])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def createDataSet(request):
     if request.method == 'POST':
         type_dataset = request.data.get('type_dataset')
         dataset_name = request.data.get('name')
-        print(request.user.id)
         user_id = User.objects.get(pk=request.user.id)
         gender = []
-        if request.data.get('gender') == 'all':
+        if request.data.get('gender') == 'All':
             gender.append('F')
             gender.append('M')
         else:
@@ -33,8 +32,9 @@ def createDataSet(request):
         # parameter search
         if type_dataset == 'parameter':
             attributes = request.data.get('attributes')
+            print(attributes)
             size = request.data.get('size')
-            if size != 'all':
+            if size != 'All':
                 size = int(size)    
             # gender = request.data.get('gender')
             morality = request.data.get('morality')
@@ -47,15 +47,15 @@ def createDataSet(request):
             for i in attribute:
                 attribute_id.append(i.pk)
                 # filtering authors
-            if morality == 'living':
-                if size == 'all':
+            if morality == 'Living':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender, date_of_death=None, attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender, date_of_death=None, attribute__in=attribute_id)[:size]
                 for i in author:
                     dataset.author.add(i.pk)
-            elif morality == 'deceased':
-                if size == 'all':
+            elif morality == 'Deceased':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)[:size]
@@ -63,8 +63,8 @@ def createDataSet(request):
                     if i.date_of_death!=None:
                         # adding authors key to dataset
                         dataset.author.add(i.pk)
-            elif morality == 'all':
-                if size == 'all':
+            elif morality == 'All':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)[:size]
@@ -178,11 +178,12 @@ def dataset_detail(request,pk):
 @api_view(['GET',])
 # @permission_classes([IsAuthenticated])
 def discussion_mode(request,pk):
-    # questions = list(Question.objects.filter(dataset=pk))
     dataset = Dataset.objects.get(pk=pk)
+    print(dataset.author.all())
     quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
+    print(len(quotations))
     quotations_serializer = QuoteSerializer(quotations, many=True)
-    random_quotations = random.sample(quotations_serializer.data,5)
+    random_quotations = random.sample(quotations_serializer.data,len(quotations))
     # serializer = QuestionSerializer(random_question, many=True)
     
     return Response({'data':random_quotations,'message':'Questions of dataset','status':True})

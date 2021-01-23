@@ -58,13 +58,13 @@ class UserLoginApiView(ObtainAuthToken):
             if len(queryset):
                 if not queryset[0].check_password(request.data.get("password")):
                     return Response({
-                        "status": "failure",
-                        "message": "Invalid Password",
+                        "status": "Failure",
+                        "message": "Password",
                         "data": ""}, 
                                     status=status.HTTP_401_UNAUTHORIZED)
                 if queryset[0].is_active == False:
                     return Response({
-                        "status": "failure",
+                        "status": "Failure",
                         "message": "User is Deactivated",
                         "data": ""}, 
                                     status=status.HTTP_401_UNAUTHORIZED)
@@ -80,7 +80,7 @@ class UserLoginApiView(ObtainAuthToken):
                     })
             return Response({
                 "status": "Failure",
-                "message": "Invalid username/email",
+                "message": "Email",
                 "data":""
                              },
                                 status=status.HTTP_401_UNAUTHORIZED)
