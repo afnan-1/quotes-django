@@ -84,7 +84,7 @@ def createDataSet(request):
     return Response({"message": "POST Request"})
 
 @api_view(['PUT',])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def updateDataSet(request,pk):
     if request.method == 'PUT':
         type_dataset = request.data.get('type_dataset')
@@ -93,7 +93,7 @@ def updateDataSet(request,pk):
         dataset.dataset_name = dataset_name
         dataset.type_dataset = type_dataset
         gender = []
-        if request.data.get('gender') == 'all':
+        if request.data.get('gender') == 'All':
             gender.append('F')
             gender.append('M')
         else:
@@ -103,7 +103,7 @@ def updateDataSet(request,pk):
         if type_dataset == 'parameter':
             attributes = request.data.get('attributes')
             size = request.data.get('size')
-            if size != 'all':
+            if size != 'All':
                 size = int(size)    
             # gender = request.data.get('gender')
             morality = request.data.get('morality')
@@ -122,16 +122,16 @@ def updateDataSet(request,pk):
             for i in attribute:
                 attribute_id.append(i.pk)
                 # filtering authors
-            if morality == 'living':
-                if size == 'all':
+            if morality == 'Living':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender, date_of_death=None, attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender, date_of_death=None, attribute__in=attribute_id)[:size]
                 for i in author:
                     print(i)
                     dataset.author.add(i.pk)
-            elif morality == 'deceased':
-                if size == 'all':
+            elif morality == 'Deceased':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)[:size]
@@ -139,8 +139,8 @@ def updateDataSet(request,pk):
                     if i.date_of_death!=None:
                         # adding authors key to dataset
                         dataset.author.add(i.pk)
-            elif morality == 'all':
-                if size == 'all':
+            elif morality == 'All':
+                if size == 'All':
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)
                 else:
                     author = Author.objects.filter(sex__in=gender,attribute__in=attribute_id)[:size]
@@ -168,7 +168,7 @@ def list_dataset(request):
     return Response({'data':serializer.data,'length':len(author_serializer.data),'message':'Dataset List','status':True})
 
 @api_view(['GET',])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def dataset_detail(request,pk):
     dataset = Dataset.objects.get(pk=pk)
     serializer = DataSetSerializer(dataset)
@@ -179,9 +179,7 @@ def dataset_detail(request,pk):
 # @permission_classes([IsAuthenticated])
 def discussion_mode(request,pk):
     dataset = Dataset.objects.get(pk=pk)
-    print(dataset.author.all())
     quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
-    print(len(quotations))
     quotations_serializer = QuoteSerializer(quotations, many=True)
     random_quotations = random.sample(quotations_serializer.data,len(quotations))
     # serializer = QuestionSerializer(random_question, many=True)

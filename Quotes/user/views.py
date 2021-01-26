@@ -97,7 +97,6 @@ class UserFacebookLoginApiView(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         try:
-
             queryset = User.objects.filter(
                 Q(email=request.data.get("email")))
             print(queryset)
@@ -114,7 +113,7 @@ class UserFacebookLoginApiView(ObtainAuthToken):
                 return Response({
                     "status": "success",
                     "message": "User login successfully",
-                    "data": {"token":token.key, 'email': queryset.email, 'username': queryset.username,
+                    "data": {"token":token.key,'id':queryset.id, 'email': queryset.email, 'username': queryset.username,
                                  'name': queryset.name, 'gender': queryset.gender}
                     })
 
@@ -156,11 +155,11 @@ class UserGoogleLoginApiView(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         try:
-
             queryset = User.objects.filter(
                 Q(email=request.data.get("email")))
             if len(queryset):
-                if queryset[0].facebook_token != request.data.get("google_token"):
+                if queryset[0].google_token != request.data.get("google_token"):
+                    print(queryset[0].google_token)
                     return Response({
                         "status":"failure",
                         "message": "Invalid Token",
@@ -172,12 +171,11 @@ class UserGoogleLoginApiView(ObtainAuthToken):
                 return Response({
                     "status": "success",
                     "message": "User login successfully",
-                    "data":  {"token":token.key, 'uuid': queryset.uuid, 'email': queryset.email, 'username': queryset.username, 'phone_number': queryset.phone_number,
-                                 'name': queryset.name, 'birthday': queryset.birthday, 'gender': queryset.gender}
+                    "data": {"token":token.key, 'date_of_birth':queryset.date_of_birth,'email': queryset.email, 'username': queryset.username,
+                                 'name': queryset.name,'first_name':queryset.first_name,'last_name':queryset.last_name,'nickname':queryset.nickname,'gender': queryset.gender}
                     })
 
             else:
-
                 firstname = request.data.get('first_name')
                 lastname = request.data.get('last_name')
                 name = firstname + ' ' + lastname
@@ -188,7 +186,7 @@ class UserGoogleLoginApiView(ObtainAuthToken):
                     name=name,
                     username=request.data.get('email'),
                     email=request.data.get('email'),
-                    facebook_token=request.data.get('google_token'),
+                    google_token=request.data.get('google_token'),
                 )
 
                 user.save()
@@ -196,18 +194,20 @@ class UserGoogleLoginApiView(ObtainAuthToken):
                 token, created = Token.objects.get_or_create(user=user)
                 queryset = User.objects.get(id=token.user_id)
 
-            return Response({"status": "success",
-                             "message": "user signup successfully", 
-                             "data":{'token': token.key, 'uuid': queryset.uuid, 'email': queryset.email, 'username': queryset.username, 'phone_number': queryset.phone_number,
-                                 'name': queryset.name, 'birthday': queryset.birthday, 'gender': queryset.gender}
-                             })
+                return Response({
+                    "status": "success",
+                    "message": "user signup successfully", 
+                    "data":{'token': token.key, 'email': queryset.email, 'username': queryset.username,
+                    'name': queryset.name,'first_name':queryset.first_name,'last_name':queryset.last_name,  'gender': queryset.gender}
+                    })
 
         except Exception as e:
             return Response({
                 "status": "Failure",
                 "message": "Login failed - " + str(e),
-                "data":""}, 
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                "data":""}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
             
 
 class GetUserList(viewsets.ModelViewSet):
