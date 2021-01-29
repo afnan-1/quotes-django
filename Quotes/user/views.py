@@ -72,10 +72,11 @@ class UserLoginApiView(ObtainAuthToken):
                 response = super().post(request, *args, **kwargs)
                 token = Token.objects.get(key=response.data['token'])
                 queryset = User.objects.get(id=token.user_id)
+                serializer = GetUserListSerializer(queryset, many=False, context={'request':request})
                 return Response({
                     "status": "success", 
                     "messege ": "User Log in", 
-                    "data": {'token': token.key,'id':queryset.id, 'email': queryset.email},
+                    "data": {'token': token.key,'data':serializer.data},
                     'error':'false'
                     })
             return Response({
@@ -168,11 +169,11 @@ class UserGoogleLoginApiView(ObtainAuthToken):
 
                 token, created = Token.objects.get_or_create(user=queryset[0])
                 queryset = User.objects.get(id=token.user_id)
+                serializer = GetUserListSerializer(queryset,many=False, context={'request':request})
                 return Response({
                     "status": "success",
                     "message": "User login successfully",
-                    "data": {"token":token.key, 'date_of_birth':queryset.date_of_birth,'email': queryset.email, 'username': queryset.username,
-                                 'name': queryset.name,'first_name':queryset.first_name,'last_name':queryset.last_name,'nickname':queryset.nickname,'gender': queryset.gender}
+                    "data": {"token":token.key,'data':serializer.data}
                     })
 
             else:
@@ -198,7 +199,7 @@ class UserGoogleLoginApiView(ObtainAuthToken):
                     "status": "success",
                     "message": "user signup successfully", 
                     "data":{'token': token.key, 'email': queryset.email, 'username': queryset.username,
-                    'name': queryset.name,'first_name':queryset.first_name,'last_name':queryset.last_name,  'gender': queryset.gender}
+                    'name': queryset.name,'first_name':queryset.first_name,'last_name':queryset.last_name,  'gender': queryset.gender,'id':queryset.id}
                     })
 
         except Exception as e:
@@ -215,10 +216,36 @@ class GetUserList(viewsets.ModelViewSet):
     serializer_class = GetUserListSerializer
     permission_classes = (IsAuthenticated,)
 
-class UpdateUser(generics.RetrieveUpdateAPIView):
+# class UpdateUser(generics.RetrieveUpdateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UpdateUserSerializer
+#     permission_classes = (AllowAny,)
+
+class UpdateUser(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
-    permission_classes = (AllowAny,)
+
+    def put(self,request,*args,**kwargs):
+        pk = request.data.get('id')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        nickname = request.data.get('nickname')
+        profile_picture = request.data.get('profile_picture')
+        print(profile_picture)
+        email = request.data.get('email')
+        date_of_birth = request.data.get('date_of_birth')
+        gender = request.data.get('gender')
+        user = User.objects.get(pk=request.user.id)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.nickname = nickname
+        user.email = email
+        user.date_of_birth = date_of_birth
+        user.gender = gender
+        user.profile_picture = profile_picture
+        user.save()
+        serializer = UpdateUserSerializer(user, many=False,context={"request":request} )
+        return Response({'message':'updated user','data':serializer.data})
 
 class DeleteUser(generics.DestroyAPIView):
     queryset = User.objects.all()

@@ -9,6 +9,9 @@ from errorlog.models import ErrorMessage
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import viewsets
+from rest_framework.views import APIView
+
 
 
 # Create your views here.
@@ -102,11 +105,11 @@ def strip_data(data_list):
         stripped_list.append(data)
     return stripped_list
 
-@api_view(['GET',])
-def authors_detail(request,pk):
-    authors = Author.objects.get(pk=pk)
-    serializer = AuthorSerializer(authors)
-    return Response({'data':serializer.data, 'messages':'Authors detail','status':True})
+class AuthorDetails(APIView):
+    def get(self,request,pk,*args,**kwargs):
+        queryset = Author.objects.get(pk=pk)
+        serializer = AuthorSerializer(queryset, many=False,context={"request":request})
+        return Response({'data':serializer.data, 'messages':'Authors detail','status':True})
 
 
 @api_view(['GET',])
