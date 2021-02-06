@@ -36,3 +36,10 @@ class AuthorAdmin(admin.ModelAdmin):
             return 'Not Available'
     def author__attribute(self,obj):
         return obj.author.first_name
+
+
+class QuoteOfDay(models.Model):
+    quote = models.CharField(max_length=1000,blank=True,null=True)
+    author = models.CharField(max_length=50, blank=True, null=True)
+    def __str__(self):
+        return self.quote

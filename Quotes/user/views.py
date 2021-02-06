@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from user.models import *
 from rest_framework import status
@@ -13,6 +13,16 @@ from django.db.models import Q
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from user.tokens import account_activation_token
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+from .tokens import account_activation_token
+from django.views.generic import View
+
 User = get_user_model()
 
 
@@ -36,6 +46,7 @@ class SignUpApiViewSet(viewsets.ModelViewSet):
                     "status": "failure",
                     "message": "Username already exist",
                     "data": ""})
+            
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({
@@ -247,9 +258,27 @@ class DeleteUser(generics.DestroyAPIView):
     # permission_classes = (IsAuthenticated,)
 
 class UserView(APIView):
-
     def get(self, request, *args, **kwargs):
 
         queryset = User.objects.get(pk=request.user.id)
         serializer = GetUserListSerializer(queryset, many=False, context={"request":request})
         return Response(serializer.data)
+
+
+class ActivateAccount(View):
+
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            # messages.success(request, ('Your account have been confirmed.'))
+            return redirect('http://localhost:8000/admin')
+        else:
+            # messages.warning(request, ('The confirmation link was invalid, possibly because it has already been used.'))
+            return redirect('http://localhost:3000/admin')

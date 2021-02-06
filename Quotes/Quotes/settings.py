@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     'import_export',
     'errorlog',
     'user',
-    'dataset'
+    'django_celery_beat',
+    'dataset',
+    'django.contrib.sites'
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -143,11 +146,20 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
 # EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000"
 ]
+# CELERY_BROKER_URL = 'localhost:15672'
+CELERY_BEAT_SCHEDULE = {
+    "scheduled_task": {
+        "task": "quote.tasks.add",
+        "schedule": 5.0,
+        "args": (10, 10),
+    },
+}

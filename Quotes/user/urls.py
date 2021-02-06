@@ -14,4 +14,5 @@ urlpatterns = [
     path('getuser2/',UserView.as_view()),
     path('facebooklogin/', UserFacebookLoginApiView.as_view()),
     path('googlelogin/', UserGoogleLoginApiView.as_view()),
+    path('activate/<uidb64>/<token>/', ActivateAccount.as_view(), name='activate'),
 ]

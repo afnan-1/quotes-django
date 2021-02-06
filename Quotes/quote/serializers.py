@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Quote
+from .models import Quote,QuoteOfDay
 from dataset.models import Question
 from author.models import Author
 from dataset.serializers import QuestionSerializer
@@ -25,3 +25,8 @@ class QuoteSerializer(serializers.ModelSerializer):
         random_questions = random.sample(questions,5)
         q_serializer = QuestionSerializer(random_questions,many=True)
         return q_serializer.data
+
+class QuoteOfTheDay(serializers.ModelSerializer):
+    class Meta:
+        model = QuoteOfDay
+        fields = ('quote','author')

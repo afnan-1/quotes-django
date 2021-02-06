@@ -1,6 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from user.tokens import account_activation_token
+from django.contrib.sites.models import Site
 
 User = get_user_model()
 
@@ -34,7 +39,17 @@ class SignUpSerializer(serializers.ModelSerializer):
                 gender = validated_data['gender']
             )
             user.set_password(validated_data['password'])
+            user.is_active = False
             user.save()
+            current_site = Site.objects.get_current()
+            subject = 'Activate Your MySite Account'
+            message = render_to_string('email_activation.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            user.email_user(subject, message)
             return user
         else:
             raise Exception('Password do not match')
