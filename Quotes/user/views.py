@@ -76,7 +76,7 @@ class UserLoginApiView(ObtainAuthToken):
                 if queryset[0].is_active == False:
                     return Response({
                         "status": "Failure",
-                        "message": "User is Deactivated",
+                        "message": "Activation",
                         "data": ""}, 
                                     status=status.HTTP_401_UNAUTHORIZED)
 
@@ -278,7 +278,7 @@ class ActivateAccount(View):
             user.is_active = True
             user.save()
             # messages.success(request, ('Your account have been confirmed.'))
-            return redirect('http://localhost:8000/admin')
+            return redirect('http://localhost:3000/emailactivation')
         else:
             # messages.warning(request, ('The confirmation link was invalid, possibly because it has already been used.'))
-            return redirect('http://localhost:3000/admin')
+            return redirect('http://localhost:3000')
