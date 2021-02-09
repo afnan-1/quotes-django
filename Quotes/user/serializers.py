@@ -42,7 +42,7 @@ class SignUpSerializer(serializers.ModelSerializer):
             user.is_active = False
             user.save()
             current_site = Site.objects.get_current()
-            subject = 'Activate Your MySite Account'
+            subject = 'Activate Your Quotes Account'
             message = render_to_string('email_activation.html', {
                 'user': user,
                 'domain': current_site.domain,

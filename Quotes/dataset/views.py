@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import json
 import random
-
+from author.models import Attribute
 # Create your views here.
 
 
@@ -200,3 +200,9 @@ def delete_dataset(request,pk):
             'message':'Error',
             'status':False
         })
+
+@api_view(['GET',])
+def list_attribute(request):
+    attributes = Attribute.objects.all()
+    serializer = AttributeSerializer(attributes, many=True)
+    return Response(serializer.data)

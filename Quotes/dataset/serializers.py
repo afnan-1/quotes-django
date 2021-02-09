@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from author.models import Author
+from author.models import Author, Attribute
 from .models import Dataset, Question
-
 
 class AuthorSerializer(serializers.ModelSerializer):
     attribute = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
@@ -31,3 +30,8 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields='__all__'
+
+class AttributeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attribute
+        fields = ('name',)

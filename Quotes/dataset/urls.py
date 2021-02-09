@@ -11,5 +11,6 @@ urlpatterns = [
     path('discussionmode/<int:pk>/', discussion_mode),
     path('delete/<int:pk>/',delete_dataset),
     path('create/',createDataSet),
+    path('attributes/',list_attribute),
     path('update/<int:pk>',updateDataSet)
 ]
