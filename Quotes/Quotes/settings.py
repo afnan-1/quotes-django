@@ -150,10 +150,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-
+EMAIL_HOST_USER = 'auctionmgmt@gmail.com'
+EMAIL_HOST_PASSWORD = 'MyPassword123'
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "http://ec2-13-59-99-30.us-east-2.compute.amazonaws.com:8000/"
+    "http://ec2-13-59-99-30.us-east-2.compute.amazonaws.com:8000"
 ]
 # CELERY_BROKER_URL = 'localhost:15672'
 CELERY_BEAT_SCHEDULE = {

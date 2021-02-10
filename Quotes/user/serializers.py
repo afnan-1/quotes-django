@@ -39,17 +39,17 @@ class SignUpSerializer(serializers.ModelSerializer):
                 gender = validated_data['gender']
             )
             user.set_password(validated_data['password'])
-            user.is_active = False
+            # user.is_active = False
             user.save()
-            current_site = Site.objects.get_current()
-            subject = 'Activate Your Quotes Account'
-            message = render_to_string('email_activation.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            user.email_user(subject, message)
+            # current_site = Site.objects.get_current()
+            # subject = 'Activate Your Quotes Account'
+            # message = render_to_string('email_activation.html', {
+            #     'user': user,
+            #     'domain': current_site.domain,
+            #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            #     'token': account_activation_token.make_token(user),
+            # })
+            # user.email_user(subject, message)
             return user
         else:
             raise Exception('Password do not match')
