@@ -170,14 +170,22 @@ class UserGoogleLoginApiView(ObtainAuthToken):
             queryset = User.objects.filter(
                 Q(email=request.data.get("email")))
             if len(queryset):
+     
                 if queryset[0].google_token != request.data.get("google_token"):
-                    print(queryset[0].google_token)
+                    if queryset[0].google_token is None:
+                
+                        return Response({
+                            "status":'failure',
+                            "message":'USERNOTGOOGLE',
+                            "data":""
+                        },status=status.HTTP_401_UNAUTHORIZED)
+                  
                     return Response({
                         "status":"failure",
                         "message": "Invalid Token",
                         "data":""}, 
                                     status=status.HTTP_401_UNAUTHORIZED)
-
+                
                 token, created = Token.objects.get_or_create(user=queryset[0])
                 queryset = User.objects.get(id=token.user_id)
                 serializer = GetUserListSerializer(queryset,many=False, context={'request':request})
