@@ -30,8 +30,8 @@ class SignUpSerializer(serializers.ModelSerializer):
         """Function to create user"""
         if validated_data['password']:
             user = User.objects.create(
-                username=validated_data['email'],
-                email=validated_data['email'],
+                username=validated_data['email'].lower(),
+                email=validated_data['email'].lower(),
                 first_name = validated_data['first_name'],
                 last_name=validated_data['last_name'],
                 nickname=validated_data['nickname'],
