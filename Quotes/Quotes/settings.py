@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import environ
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 import os
 from pathlib import Path
 import datetime
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(+5*x-u^ih$fps_8f0-(cx--i-i#21ct%9ugnwi#jrl0h=-l9-'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,13 +92,25 @@ WSGI_APPLICATION = 'Quotes.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
+if env('ENVIRONMENT')=='development':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env('DATABASE_NAME'),
+            'USER': env("DATABASE_USER"),
+            'PASSWORD': env("DATABASE_PASSWORD"),
+            'HOST': env("DATABASE_HOST"),
+            'PORT': env("DATABASE_PORT"),
+        }
+    }
 
 
 # Password validation
@@ -150,8 +166,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'auctionmgmt@gmail.com'
-EMAIL_HOST_PASSWORD = 'MyPassword123'
+EMAIL_HOST_USER = env('EMAIL_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://ec2-13-59-99-30.us-east-2.compute.amazonaws.com:8000",
