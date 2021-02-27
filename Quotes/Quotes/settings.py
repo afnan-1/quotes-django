@@ -102,7 +102,6 @@ if env('ENVIRONMENT')=='development':
 else:
     DATABASES = {
         'default': {
-
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': env('DATABASE_NAME'),
             'USER': env("DATABASE_USER"),
@@ -162,12 +161,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = env('EMAIL_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
+# EMAIL_BACKEND = env('EMAIL_BACKEND')
+# AWS_ACCESS_KEY_ID=env("AWS_KEY")
+# AWS_SECRET_ACCESS_KEY=env("AWS_SECRET_ACCESS_KEY")
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = env('EMAIL_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://ec2-13-59-99-30.us-east-2.compute.amazonaws.com:8000",
