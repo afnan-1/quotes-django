@@ -63,9 +63,9 @@ class UserLoginApiView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         try:
             # import pdb; pdb.set_trace()
-            request.data['username'] = request.data.get('email')
+            request.data['username'] = request.data.get('email').lower()
             queryset = User.objects.filter(
-                Q(username=request.data.get("email")) | Q(email=request.data.get("email")))
+                Q(username=request.data.get("email").lower()) | Q(email=request.data.get("email").lower()))
             if len(queryset):
                 if not queryset[0].check_password(request.data.get("password")):
                     return Response({
