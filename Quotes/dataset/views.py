@@ -32,14 +32,14 @@ def createDataSet(request):
         # parameter search
         if type_dataset == 'parameter':
             attributes = request.data.get('attributes')
-            print(attributes)
+            print(str(attributes)[1:-1].replace("'",""))
             size = request.data.get('size')
             if size != 'All':
                 size = int(size)    
-            # gender = request.data.get('gender')
             morality = request.data.get('morality')
+            print(gender)
             dataset = Dataset(dataset_name=dataset_name,user=user_id ,type_dataset=type_dataset, attributes=attributes,size=size,
-            gender=gender, morality=morality)
+            gender=request.data.get('gender'), morality=morality)
             dataset.save()
             attribute_id = []
                 # filtering attributes from table
@@ -111,7 +111,7 @@ def updateDataSet(request,pk):
             dataset.morality = morality
             dataset.attributes = attributes
             dataset.size = size
-            dataset.gender = gender
+            dataset.gender = request.data.get('gender')
             # dataset = Dataset(dataset_name=dataset_name, type_dataset=type_dataset, attributes=attributes,size=size,
             # gender=gender, morality=morality)
             dataset.save()
@@ -176,14 +176,12 @@ def dataset_detail(request,pk):
 
 
 @api_view(['GET',])
-# @permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])    
 def discussion_mode(request,pk):
     dataset = Dataset.objects.get(pk=pk)
     quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
     quotations_serializer = QuoteSerializer(quotations, many=True, context={'request':request})
     random_quotations = random.sample(quotations_serializer.data,len(quotations))
-    # serializer = QuestionSerializer(random_question, many=True)
-    
     return Response({'data':random_quotations,'message':'Questions of dataset','status':True})
 
 
