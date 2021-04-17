@@ -70,6 +70,7 @@ ROOT_URLCONF = 'Quotes.urls'
 
 DATE_FORMAT = 'M d Y'
 DATE_INPUT_FORMATS = ['%m/%d/%Y']
+DATE_OUTPUT_FORMATS = ['%m/%d/%Y']
 
 TEMPLATES = [
     {

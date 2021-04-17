@@ -23,7 +23,12 @@
     <input type="file" name="myquotes">
     <button class="btn btn-block btn-primary mt-1" type="submit">Upload</button>
   </form>
-  
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3>Upload Attributes</h3>
+    <input type="file" name="myattributes">
+    <button class="btn btn-block btn-primary mt-1" type="submit">Upload</button>
+  </form>
 </div>
 {% else %}
     <h1 class='text-center'>Please login First To access this Page</h1>
