@@ -180,8 +180,14 @@ def dataset_detail(request,pk):
 def discussion_mode(request,pk):
     dataset = Dataset.objects.get(pk=pk)
     quotations = Quote.objects.filter(author__pk__in=list(dataset.author.all().values_list('id',flat=True)))
-    quotations_serializer = QuoteSerializer(quotations, many=True, context={'request':request})
-    random_quotations = random.sample(quotations_serializer.data,len(quotations))
+    temp = []
+    filter_quotes=[]
+    for i in quotations.order_by('?'):
+        if i.author not in temp:
+            temp.append(i.author)
+            filter_quotes.append(i)
+    quotations_serializer = QuoteSerializer(filter_quotes, many=True, context={'request':request})
+    random_quotations = random.sample(quotations_serializer.data,len(filter_quotes))
     return Response({'data':random_quotations,'message':'Questions of dataset','status':True})
 
 
