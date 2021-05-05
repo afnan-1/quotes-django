@@ -136,5 +136,12 @@ class AuthorDetails(APIView):
 @api_view(['GET',])
 def authors_list(request):
     authors = Author.objects.all()
-    serializer = AuthorListSerializer(authors, many=True)
+    quotes = Quote.objects.filter(author__in=authors)
+    author_quotes = []
+    temp =[]
+    for i in quotes:
+        if i.author not in temp:
+            temp.append(i.author)
+            author_quotes.append(i.author)
+    serializer = AuthorListSerializer(author_quotes, many=True)
     return Response({'data':serializer.data, 'messages':'Authors list','status':True})
